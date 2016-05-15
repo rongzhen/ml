@@ -14,11 +14,10 @@ class ex1:
         self.X=data[:,0]
         self.y=data[:,1]
         self.m=len(self.X)
-        self.theta=np.zeros(2)
+        self.theta=np.zeros(2) # theta should be float
         self.iterations=1500
         self.alpha=0.01
         self.newX=np.c_[np.ones(self.m),self.X] 
-        
 
     def pltData(self):
         plt.plot(self.X,self.y,'ro')
@@ -50,14 +49,14 @@ class ex1:
        fig = plt.figure()
        ax = fig.gca(projection='3d')
 
-       theta0=np.arange(-10, 10, 0.1)
-       theta1=np.arange(-1.,4., 0.01)
-       valJ=np.zeros((len(theta0),len(theta1)))
-       theta0Grid, theta1Grid=np.meshgrid(theta0,theta1)
-       for i in range(len(theta0)):
-           for j in range(len(theta1)):
-               self.theta[0]=theta0[i]
-               self.theta[1]=theta1[j]
+       theta0Rg=np.arange(-10, 10, 0.1)
+       theta1Rg=np.arange(-1.,4., 0.01)
+       valJ=np.zeros((len(theta0Rg),len(theta1Rg)))
+       theta0Grid, theta1Grid=np.meshgrid(theta0Rg,theta1Rg)
+       for i in range(len(theta0Rg)):
+           for j in range(len(theta1Rg)):
+               self.theta[0]=theta0Rg[i]
+               self.theta[1]=theta1Rg[j]
                valJ[i,j]=self.calCostFun()
        i,j = np.unravel_index(valJ.argmin(), valJ.shape)
 #       surf = ax.plot_surface(theta0Grid, theta1Grid, valJ.T, rstride=1, cstride=1, cmap=cm.coolwarm,
@@ -70,12 +69,17 @@ class ex1:
        levels = np.arange(-30.,30.,5)
        CS=plt.contour(theta0Grid, theta1Grid, valJ.T, levels)
        plt.clabel(CS, inline=1, fontsize=10)
-       plt.plot([theta0[i]],[theta1[j]],'-ro')
+       plt.plot([theta0Rg[i]],[theta1Rg[j]],'-ro')
        for ele in thetaHis:
           plt.plot([ele[0]],[ele[1]],'b*')
        plt.xlabel("theta0")
        plt.ylabel("theta1")
        plt.show()
+
+
+    def check(self):
+        theta = np.linalg.lstsq(self.newX, self.y)[0]
+        return(theta)
 
 OB=ex1()
 OB.iterations=5000
@@ -84,3 +88,6 @@ theta,thetaHis=OB.gradDescent()
 print(theta)
 OB.pltData()
 OB.visCostFun(thetaHis)
+thetaCheck=OB.check()
+print(theta) # very interesting that theta changed by OB.visCostFun(thetaHis)
+print(thetaCheck)

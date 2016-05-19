@@ -13,7 +13,7 @@ class ex1:
         data=np.loadtxt("ex1data1.txt",delimiter=",")
         self.X=data[:,0]
         self.y=data[:,1]
-        self.m=len(self.X)
+        self.m=len(self.y)
         self.theta=np.zeros(2) # theta should be float
         self.iterations=1500
         self.alpha=0.01
@@ -53,11 +53,12 @@ class ex1:
        theta1Rg=np.arange(-1.,4., 0.01)
        valJ=np.zeros((len(theta0Rg),len(theta1Rg)))
        theta0Grid, theta1Grid=np.meshgrid(theta0Rg,theta1Rg)
+       theta=np.zeros(2)
        for i in range(len(theta0Rg)):
            for j in range(len(theta1Rg)):
-               self.theta[0]=theta0Rg[i]
-               self.theta[1]=theta1Rg[j]
-               valJ[i,j]=self.calCostFun()
+               theta[0]=theta0Rg[i]
+               theta[1]=theta1Rg[j]
+               valJ[i,j]=1./(2.*self.m)*np.sum(((theta.dot(self.newX.T))-self.y)**2) 
        i,j = np.unravel_index(valJ.argmin(), valJ.shape)
 #       surf = ax.plot_surface(theta0Grid, theta1Grid, valJ.T, rstride=1, cstride=1, cmap=cm.coolwarm,
 #                       linewidth=0, antialiased=False)
@@ -85,9 +86,8 @@ OB=ex1()
 OB.iterations=5000
 val=OB.calCostFun()
 theta,thetaHis=OB.gradDescent()
-print(theta)
 OB.pltData()
 OB.visCostFun(thetaHis)
 thetaCheck=OB.check()
-print(theta) # very interesting that theta changed by OB.visCostFun(thetaHis)
+print(theta)
 print(thetaCheck)
